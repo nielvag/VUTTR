@@ -1,0 +1,8 @@
+{
+  "name": "VUTTR",
+  "version": "1.0.0",
+  "description": "VUTTR - Very Useful Tools to Remember is a simple application to manage tools and it names, links, descriptions and tags.",
+  "main": "index.js",
+  "author": "@nielvag",
+  "license": "MIT"
+}
