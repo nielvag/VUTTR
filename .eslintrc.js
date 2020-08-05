@@ -12,5 +12,6 @@ module.exports = {
   },
   rules: {
     camelcase: 'off',
+    'object-curly-newline': 'off',
   },
 };

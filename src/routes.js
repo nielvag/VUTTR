@@ -2,8 +2,8 @@ const { Router } = require('express');
 
 const routes = Router();
 
-routes.get('/', async (req, res) => {
-  res.json({ msg: 'ok!' });
-});
+const ToolsController = require('./app/controllers/ToolsController');
+
+routes.post('/tools', ToolsController.store);
 
 module.exports = routes;
