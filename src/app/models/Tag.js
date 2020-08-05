@@ -1,6 +1,6 @@
 const { Sequelize, Model } = require('sequelize');
 
-class Tool extends Model {
+class Tag extends Model {
   static init(sequelize) {
     super.init({
       id: {
@@ -9,17 +9,18 @@ class Tool extends Model {
         autoIncrement: true,
         allowNull: false,
       },
-      title: Sequelize.STRING,
-      link: Sequelize.STRING,
-      description: Sequelize.STRING,
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
     }, {
       sequelize,
     });
   }
 
   static associate(models) {
-    this.belongsToMany(models.Tag, { through: models.ToolTag, foreignKey: 'tool_id' });
+    this.belongsToMany(models.Tool, { through: models.ToolTag, foreignKey: 'tag_id' });
   }
 }
 
-module.exports = Tool;
+module.exports = Tag;
