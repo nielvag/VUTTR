@@ -36,4 +36,28 @@ module.exports = {
       tags: tagsName,
     });
   },
+
+  async index(req, res) {
+    const { per_page = 30, page = 1 } = req.query;
+
+    const tools = await Tool.findAll({
+      attributes: ['id', 'title', 'link', 'description'],
+      include: {
+        model: Tag,
+        attributes: ['name'],
+      },
+      limit: per_page,
+      offset: (page - 1) * per_page,
+    });
+
+    const toolsFormatted = tools.map(({ id, title, link, description, Tags }) => ({
+      id,
+      title,
+      link,
+      description,
+      tags: Tags.map(({ name }) => name),
+    }));
+
+    res.json(toolsFormatted);
+  },
 };
