@@ -1,16 +1,29 @@
+const Yup = require('yup');
+
 const Tool = require('../models/Tool');
 const Tag = require('../models/Tag');
 const ToolTag = require('../models/ToolTag');
 
 module.exports = {
   async store(req, res) {
+    const schema = Yup.object().shape({
+      title: Yup.string().required(),
+      link: Yup.string().url(),
+      description: Yup.string(),
+      tags: Yup.array(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.json({ error: 'Validation failed!' });
+    }
+
     const { title, link, description, tags } = req.body;
 
     const tool = await Tool.create({ title, link, description });
 
     const promisesToCreateTags = tags.map((tag) => Tag.findOrCreate({
       where: {
-        name: tag,
+        name: String(tag),
       },
     }));
 
@@ -29,7 +42,7 @@ module.exports = {
 
     await Promise.all(promisesToCreateAssociation);
 
-    res.json({
+    return res.json({
       id: tool.id,
       title: tool.title,
       link: tool.link,
@@ -39,6 +52,16 @@ module.exports = {
   },
 
   async index(req, res) {
+    const schema = Yup.object().shape({
+      per_page: Yup.number().positive().min(1),
+      page: Yup.number().positive().min(1),
+      tag: Yup.string(),
+    });
+
+    if (!(await schema.isValid(req.query))) {
+      return res.json({ error: 'Validation is failed' });
+    }
+
     const { per_page = 30, page = 1, tag } = req.query;
 
     const filterOption = tag ? { name: tag } : {};
@@ -82,10 +105,17 @@ module.exports = {
       tags: Tags.map(({ name }) => name),
     }));
 
-    res.json(toolsFormatted);
+    return res.json(toolsFormatted);
   },
 
   async remove(req, res) {
+    const schema = Yup.object().shape({
+      id: Yup.number().positive().min(1),
+    });
+
+    if (!(await schema.isValid(req.params))) {
+      return res.json({ error: 'Validation is failed' });
+    }
     const { id: tool_id } = req.params;
     await ToolTag.destroy({
       where: {
@@ -99,6 +129,6 @@ module.exports = {
       },
     });
 
-    res.json({ response: req.params.id });
+    return res.json({ response: req.params.id });
   },
 };
