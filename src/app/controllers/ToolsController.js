@@ -1,4 +1,3 @@
-const Op = require('sequelize');
 const Tool = require('../models/Tool');
 const Tag = require('../models/Tag');
 const ToolTag = require('../models/ToolTag');
@@ -31,6 +30,7 @@ module.exports = {
     await Promise.all(promisesToCreateAssociation);
 
     res.json({
+      id: tool.id,
       title: tool.title,
       link: tool.link,
       description: tool.description,
@@ -83,5 +83,22 @@ module.exports = {
     }));
 
     res.json(toolsFormatted);
+  },
+
+  async remove(req, res) {
+    const { id: tool_id } = req.params;
+    await ToolTag.destroy({
+      where: {
+        tool_id,
+      },
+    });
+
+    await Tool.destroy({
+      where: {
+        id: tool_id,
+      },
+    });
+
+    res.json({ response: req.params.id });
   },
 };
