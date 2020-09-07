@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    image: nodejs
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    networks:
+      - app-network
+    command: yarn start
+
+  db:
+    image: postgres:11
+    container_name: db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+    volumes:     
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      app-network:
+        ipv4_address: "172.16.238.10"
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"
+
+volumes:
+  dbdata:
+  node_modules:
