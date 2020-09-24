@@ -4,6 +4,8 @@ const Tool = require('../models/Tool');
 const Tag = require('../models/Tag');
 const ToolTag = require('../models/ToolTag');
 
+const validationErrorMessage = 'It seems there is an error in the request!';
+
 module.exports = {
   async store(req, res) {
     const schema = Yup.object().shape({
@@ -14,7 +16,7 @@ module.exports = {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.json({ error: 'Validation failed!' });
+      return res.status(400).json({ error: validationErrorMessage });
     }
 
     const { title, link, description, tags } = req.body;
@@ -42,7 +44,7 @@ module.exports = {
 
     await Promise.all(promisesToCreateAssociation);
 
-    return res.json({
+    return res.status(201).json({
       id: tool.id,
       title: tool.title,
       link: tool.link,
@@ -59,7 +61,7 @@ module.exports = {
     });
 
     if (!(await schema.isValid(req.query))) {
-      return res.json({ error: 'Validation is failed' });
+      return res.status(400).json({ error: validationErrorMessage });
     }
 
     const { per_page = 30, page = 1, tag } = req.query;
@@ -114,7 +116,7 @@ module.exports = {
     });
 
     if (!(await schema.isValid(req.params))) {
-      return res.json({ error: 'Validation is failed' });
+      return res.status(400).json({ error: validationErrorMessage });
     }
     const { id: tool_id } = req.params;
     await ToolTag.destroy({
@@ -129,6 +131,6 @@ module.exports = {
       },
     });
 
-    return res.json({ response: req.params.id });
+    return res.status(204).json();
   },
 };
