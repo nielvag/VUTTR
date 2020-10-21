@@ -19,6 +19,7 @@ class Tool extends Model {
 
   static associate(models) {
     this.belongsToMany(models.Tag, { through: models.ToolTag, foreignKey: 'tool_id' });
+    this.belongsTo(models.User, { foreignKey: 'own_id' });
   }
 }
 

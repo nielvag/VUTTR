@@ -1,6 +1,7 @@
 const Yup = require('yup');
 
 const Tool = require('../models/Tool');
+const User = require('../models/User');
 const Tag = require('../models/Tag');
 const ToolTag = require('../models/ToolTag');
 
@@ -21,7 +22,7 @@ module.exports = {
 
     const { title, link, description, tags } = req.body;
 
-    const tool = await Tool.create({ title, link, description });
+    const tool = await Tool.create({ title, link, description, own_id: 1 }); //TODO: pegar id do usuário
 
     const promisesToCreateTags = tags.map((tag) => Tag.findOrCreate({
       where: {
