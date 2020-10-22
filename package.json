@@ -6,11 +6,13 @@
   "author": "@nielvag",
   "license": "MIT",
   "scripts": {
-    "start": "yarn nodemon src/index.js"
+    "start": "yarn nodemon src/index.js",
+    "test": "jest"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "jest": "^26.6.0",
     "pg": "^8.3.0",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.4",
