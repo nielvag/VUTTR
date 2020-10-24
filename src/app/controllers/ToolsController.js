@@ -22,7 +22,12 @@ module.exports = {
 
     const { title, link, description, tags } = req.body;
 
-    const tool = await Tool.create({ title, link, description, own_id: 1 }); //TODO: pegar id do usuário
+    const tool = await Tool.create({
+      title,
+      link,
+      description,
+      own_id: req.userId
+    });
 
     const promisesToCreateTags = tags.map((tag) => Tag.findOrCreate({
       where: {
@@ -119,7 +124,15 @@ module.exports = {
     if (!(await schema.isValid(req.params))) {
       return res.status(400).json({ error: validationErrorMessage });
     }
+
     const { id: tool_id } = req.params;
+
+    const tool = await Tool.findOne({ where: { id: tool_id } });
+
+    if(req.userId != tool.own_id) {
+      return res.status(401).json({ error: 'Not permitted' })
+    }
+
     await ToolTag.destroy({
       where: {
         tool_id,

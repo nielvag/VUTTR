@@ -6,14 +6,19 @@ const ToolsController = require('./app/controllers/ToolsController');
 const UsersController = require('./app/controllers/UsersController');
 const SessionController = require('./app/controllers/SessionController');
 
-routes.post('/tools', ToolsController.store);
+const authMiddleware = require('./app/middlewares/authorization');
 
 routes.get('/tools', ToolsController.index);
-
-routes.delete('/tools/:id', ToolsController.remove);
 
 routes.post('/users', UsersController.store);
 
 routes.post('/login', SessionController.store);
+
+
+routes.use(authMiddleware);
+
+routes.post('/tools', ToolsController.store);
+
+routes.delete('/tools/:id', ToolsController.remove);
 
 module.exports = routes;
